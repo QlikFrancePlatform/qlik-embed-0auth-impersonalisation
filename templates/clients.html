@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Clients{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Clients</h4>
+    <a href="/clients/add" class="btn btn-primary">+ Nouveau client</a>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr><th>Nom</th><th>Email</th><th>Société</th><th>Statut</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for c in clients %}
+                <tr>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.company }}</td>
+                    <td><span class="badge bg-{{ 'success' if c.status=='active' else 'secondary' }}">{{ c.status }}</span></td>
+                    <td>
+                        <form method="post" action="/clients/{{ c.id }}/delete" style="display:inline"
+                              onsubmit="return confirm('Supprimer {{ c.name }} ?')">
+                            <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+body { background: #f5f7fa; }
+.navbar { border-bottom: 3px solid #ff6a00; }
+.card { border: none; border-radius: 12px; }
+.card-header { background: transparent; font-weight: 600; border-bottom: 1px solid #eee; }
+.table th { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
+.btn-primary { background: #004d99; border-color: #004d99; }
+.btn-primary:hover { background: #003366; }
+.btn-outline-primary { color: #004d99; border-color: #004d99; }
+.btn-outline-primary:hover { background: #004d99; color: #fff; }
+.badge { font-weight: 500; }

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head_extra %}
+{% if qlik and qlik.tenant_url and qlik_token %}
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://qfp.eu.qlikcloud.com">
+<link rel="preload" as="script" crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/@qlik/embed-web-components@1.3.0/dist/index.min.js">
+<script
+    crossorigin="anonymous"
+    defer
+    src="https://cdn.jsdelivr.net/npm/@qlik/embed-web-components@1.3.0/dist/index.min.js"
+    data-host="{{ qlik.tenant_url }}"
+    data-client-id="{{ qlik.client_id }}"
+    data-get-access-token="getQlikToken"
+    data-auth-type="Oauth2"
+></script>
+<script>
+let _qlikTokenPromise;
+
+async function getQlikToken() {
+    if (_qlikTokenPromise) return _qlikTokenPromise;
+    _qlikTokenPromise = (async () => {
+        const resp = await fetch("/api/qlik-token");
+        if (!resp.ok) throw new Error("Failed to get Qlik token");
+        const data = await resp.json();
+        _qlikTokenPromise = data.access_token;
+        return data.access_token;
+    })();
+    return _qlikTokenPromise;
+}
+
+// Pre-resolve immédiatement avec le token déjà généré
+_qlikTokenPromise = Promise.resolve("{{ qlik_token }}");
+</script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row g-4">
+    
+    {% if qlik and qlik.tenant_url and qlik_token %}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Qlik Analytics — connecté en tant que <strong>{{ session.email }}</strong></span>
+            <a href="/settings" class="btn btn-sm btn-outline-primary">Configurer</a>
+        </div>
+        <div class="card-body p-0" style="min-height:600px;width:100%">
+            {% if qlik.object_id %}
+            <qlik-embed id="qlik-chart"
+                ui="analytics/chart"
+                app-id="{{ qlik.app_id }}"
+                object-id="{{ qlik.object_id }}"
+            ></qlik-embed>
+            {% else %}
+            <qlik-embed id="qlik-app"
+                ui="classic/app"
+                app-id="{{ qlik.app_id }}"
+            ></qlik-embed>
+            {% endif %}
+        </div>
+        <script>
+        (function() {
+            const el = document.getElementById('qlik-chart') || document.getElementById('qlik-app');
+            if (!el) return;
+            if ('IntersectionObserver' in window) {
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(e => {
+                        if (e.isIntersecting) {
+                            e.target.dataset.visible = '1';
+                            obs.unobserve(e.target);
+                        }
+                    });
+                }, { rootMargin: '200px' });
+                obs.observe(el);
+            }
+        })();
+        </script>
+    </div>
+    {% elif qlik and qlik.tenant_url and not qlik.client_secret %}
+    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+        <span>Configure le <strong>Client Secret</strong> M2M Impersonation dans les paramètres.</span>
+        <a href="/settings" class="btn btn-warning btn-sm">Configurer</a>
+    </div>
+    {% else %}
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Configure ton tenant Qlik Cloud pour afficher un objet Analytics embarqué.</span>
+        <a href="/settings" class="btn btn-primary btn-sm">Configurer</a>
+    </div>
+    {% endif %}
+
+
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Configuration Qlik{% endblock %}
+{% block content %}
+<h4 class="mb-3">Configuration Qlik — M2M Impersonation</h4>
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Tenant URL</label>
+                <input type="url" name="tenant_url" class="form-control"
+                       placeholder="https://qfp.eu.qlikcloud.com"
+                       value="{{ qlik.tenant_url or '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">OAuth2 Client ID (M2M Impersonation)</label>
+                <input type="text" name="client_id" class="form-control"
+                       value="{{ qlik.client_id or '' }}">
+                <div class="form-text">Client ID d'un client OAuth de type Web avec Impersonation activé</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Client Secret</label>
+                <input type="password" name="client_secret" class="form-control"
+                       value="{{ qlik.client_secret or '' }}">
+                <div class="form-text">Client Secret du client OAuth</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">App ID</label>
+                <input type="text" name="app_id" class="form-control"
+                       placeholder="d3a2f1b0-...."
+                       value="{{ qlik.app_id or '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Object ID (chart) ou Sheet ID</label>
+                <input type="text" name="object_id" class="form-control"
+                       value="{{ qlik.object_id or '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Type d'embed</label>
+                <select name="embed_type" class="form-select">
+                    <option value="chart" {{ 'selected' if qlik.embed_type=='chart' }}>Chart simple (analytics/chart)</option>
+                    <option value="app" {{ 'selected' if qlik.embed_type=='app' }}>App complète (classic/app)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="/" class="btn btn-secondary">Retour</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

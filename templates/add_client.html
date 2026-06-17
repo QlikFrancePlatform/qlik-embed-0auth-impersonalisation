@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Ajouter un client{% endblock %}
+{% block content %}
+<h4 class="mb-3">Ajouter un client</h4>
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Nom *</label>
+                <input type="text" name="name" class="form-control" required autofocus>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Société</label>
+                <input type="text" name="company" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Statut</label>
+                <select name="status" class="form-select">
+                    <option value="active">Actif</option>
+                    <option value="inactive">Inactif</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="/clients" class="btn btn-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
