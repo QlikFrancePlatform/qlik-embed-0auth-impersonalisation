@@ -60,3 +60,17 @@ Puis ouvrir `http://localhost:5051`.
 - `defer` sur le script → ne bloque pas le rendu HTML
 - Lazy loading (IntersectionObserver) → chart chargé seulement si visible
 - Version CDN figée (`@1.3.0`) → cache navigateur optimal
+
+## Utilisateurs
+
+| Email | Mot de passe | Type |
+|-------|-------------|------|
+| `veg@qlik.com` | `admin123` | Admin |
+| `patrickjouvet.qlik@gmail.com` | `admin123` | Admin |
+| `johnbrifford.qlik@gmail.com` | `admin123` | Admin |
+| `demoqlikfr1@gmail.com` | `demo123` | Demo |
+| `demoqlikfr2@gmail.com` | `demo123` | Demo |
+| `demoqlikfr3@gmail.com` | `demo123` | Demo |
+| `demoqlikfr4@gmail.com` | `demo123` | Demo |
+| `demoqlikfr5@gmail.com` | `demo123` | Demo |
+| `demoqlikfr6@gmail.com` | `demo123` | Demo |

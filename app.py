@@ -69,6 +69,8 @@ def init_db():
                 ("demoqlikfr4@gmail.com", generate_password_hash("demo123")),
                 ("demoqlikfr5@gmail.com", generate_password_hash("demo123")),
                 ("demoqlikfr6@gmail.com", generate_password_hash("demo123")),
+                ("patrickjouvet.qlik@gmail.com", generate_password_hash("admin123")),
+                ("johnbrifford.qlik@gmail.com", generate_password_hash("admin123")),
             ],
         )
         cur.executemany(
