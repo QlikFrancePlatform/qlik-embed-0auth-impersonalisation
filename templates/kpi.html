@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}KPI{% endblock %}
+{% block head_extra %}
+{% if qlik and qlik.tenant_url and qlik_token %}
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://qfp.eu.qlikcloud.com">
+<link rel="preload" as="script" crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/@qlik/embed-web-components@1.3.0/dist/index.min.js">
+<script
+    crossorigin="anonymous"
+    defer
+    src="https://cdn.jsdelivr.net/npm/@qlik/embed-web-components@1.3.0/dist/index.min.js"
+    data-host="{{ qlik.tenant_url }}"
+    data-client-id="{{ qlik.client_id }}"
+    data-get-access-token="getQlikToken"
+    data-auth-type="Oauth2"
+></script>
+<script>
+let _qlikTokenPromise;
+
+async function getQlikToken() {
+    if (_qlikTokenPromise) return _qlikTokenPromise;
+    _qlikTokenPromise = (async () => {
+        const resp = await fetch("/api/qlik-token");
+        if (!resp.ok) throw new Error("Failed to get Qlik token");
+        const data = await resp.json();
+        _qlikTokenPromise = data.access_token;
+        return data.access_token;
+    })();
+    return _qlikTokenPromise;
+}
+
+_qlikTokenPromise = Promise.resolve("{{ qlik_token }}");
+</script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    {% if qlik and qlik.tenant_url and qlik_token %}
+    <div class="col-md-8">
+        <div class="card mb-4 text-center">
+            <div class="card-header">
+                <span>KPI — connecté en tant que <strong>{{ session.email }}</strong></span>
+            </div>
+            <div class="card-body py-5">
+                <div id="kpi-value" class="display-1 fw-bold text-primary mb-3">—</div>
+                <div id="kpi-label" class="text-muted fs-5">Chargement...</div>
+            </div>
+        </div>
+    </div>
+    <div style="position:fixed;left:-9999px;top:0;width:800px;height:600px">
+        <qlik-embed id="qlik-chart"
+            ui="analytics/chart"
+            app-id="{{ qlik.app_id }}"
+            object-id="mmmmpUF"
+        ></qlik-embed>
+    </div>
+    <script>
+    (function() {
+        const el = document.getElementById('qlik-chart');
+
+        async function fetchKpi() {
+            try {
+                const refApi = await el.getRefApi();
+                console.log('refApi:', refApi);
+                const app = await refApi.getDoc();
+                console.log('app:', app);
+                const obj = await app.getObject('mmmmpUF');
+                console.log('obj:', obj);
+                const layout = await obj.getLayout();
+                console.log('layout:', layout);
+                const matrix = layout?.qHyperCube?.qDataPages?.[0]?.qMatrix;
+                console.log('matrix:', matrix);
+                if (matrix && matrix[0]?.[0]) {
+                    document.getElementById('kpi-value').textContent = matrix[0][0].qText;
+                    document.getElementById('kpi-label').textContent = matrix[0][0].qAttrExps?.values?.[0]?.qText || '';
+                } else {
+                    document.getElementById('kpi-label').textContent = 'Aucune donnée dans l hypercube';
+                }
+            } catch (e) {
+                document.getElementById('kpi-label').textContent = 'Erreur: ' + e.message;
+                console.log('KPI error:', e);
+            }
+        }
+
+        if (!el) return;
+        setTimeout(fetchKpi, 2000);
+    })();
+    </script>
+    {% elif qlik and qlik.tenant_url and not qlik.client_secret %}
+    <div class="col-md-6">
+        <div class="alert alert-warning text-center">
+            Configure le <strong>Client Secret</strong> M2M Impersonation dans les paramètres.
+        </div>
+    </div>
+    {% else %}
+    <div class="col-md-6">
+        <div class="alert alert-info text-center">
+            Configure ton tenant Qlik Cloud dans les paramètres.
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

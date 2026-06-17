@@ -223,6 +223,20 @@ def dashboard():
         qlik=qlik, qlik_token=qlik_token)
 
 
+@app.route("/kpi")
+@login_required
+def kpi():
+    conn = get_db()
+    qlik = conn.execute("SELECT * FROM qlik_settings WHERE id = 1").fetchone()
+    conn.close()
+    qlik_token = None
+    if qlik and qlik["tenant_url"] and qlik["client_id"] and qlik["client_secret"]:
+        qlik_token = get_qlik_impersonation_token(
+            qlik["tenant_url"], qlik["client_id"], qlik["client_secret"], session["email"]
+        )
+    return render_template("kpi.html", qlik=qlik, qlik_token=qlik_token)
+
+
 @app.route("/api/qlik-token")
 @login_required
 def qlik_token_api():
