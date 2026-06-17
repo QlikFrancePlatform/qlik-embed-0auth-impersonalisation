@@ -44,7 +44,8 @@ _qlikTokenPromise = Promise.resolve("{{ qlik_token }}");
             <span>Qlik Analytics — connecté en tant que <strong>{{ session.email }}</strong></span>
             <a href="/settings" class="btn btn-sm btn-outline-primary">Configurer</a>
         </div>
-        <div class="card-body p-0" style="min-height:600px;width:100%">
+        <div class="card-body p-0">
+            <div id="kpi-value" class="text-center py-3 fs-2 fw-bold text-primary"></div>
             {% if qlik.object_id %}
             <qlik-embed id="qlik-chart"
                 ui="analytics/chart"
@@ -62,16 +63,33 @@ _qlikTokenPromise = Promise.resolve("{{ qlik_token }}");
         (function() {
             const el = document.getElementById('qlik-chart') || document.getElementById('qlik-app');
             if (!el) return;
+
+            async function fetchKpiValue() {
+                try {
+                    const refApi = await el.getRefApi();
+                    const layout = await refApi.getLayout();
+                    const matrix = layout?.qHyperCube?.qDataPages?.[0]?.qMatrix;
+                    if (matrix && matrix[0]?.[0]) {
+                        document.getElementById('kpi-value').textContent = matrix[0][0].qText;
+                    }
+                } catch (e) {
+                    console.log('KPI value not available:', e);
+                }
+            }
+
             if ('IntersectionObserver' in window) {
                 const obs = new IntersectionObserver((entries) => {
                     entries.forEach(e => {
                         if (e.isIntersecting) {
                             e.target.dataset.visible = '1';
                             obs.unobserve(e.target);
+                            fetchKpiValue();
                         }
                     });
                 }, { rootMargin: '200px' });
                 obs.observe(el);
+            } else {
+                fetchKpiValue();
             }
         })();
         </script>
