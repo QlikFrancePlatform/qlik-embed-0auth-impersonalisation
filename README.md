@@ -51,18 +51,6 @@ Puis ouvrir `http://localhost:5051`.
 |----------|-------------|
 | `SECRET_KEY` | Clé secrète Flask (optionnelle, générée automatiquement si absente) |
 
-## Utilisateurs de démonstration
-
-| Email | Mot de passe |
-|-------|-------------|
-| `veg@qlik.com` | `admin123` |
-| `demoqlikfr1@gmail.com` | `demo123` |
-| `demoqlikfr2@gmail.com` | `demo123` |
-| `demoqlikfr3@gmail.com` | `demo123` |
-| `demoqlikfr4@gmail.com` | `demo123` |
-| `demoqlikfr5@gmail.com` | `demo123` |
-| `demoqlikfr6@gmail.com` | `demo123` |
-
 ## Optimisations
 
 - Cache backend (dict + TTL 5h55) → évite 2 appels API Qlik par requête
@@ -72,7 +60,3 @@ Puis ouvrir `http://localhost:5051`.
 - `defer` sur le script → ne bloque pas le rendu HTML
 - Lazy loading (IntersectionObserver) → chart chargé seulement si visible
 - Version CDN figée (`@1.3.0`) → cache navigateur optimal
-
-## Section Access
-
-Qlik Cloud utilise le champ système `USER.EMAIL` pour le Section Access. Les valeurs dans les champs de réduction sont automatiquement mises en majuscules par le moteur Qlik.
